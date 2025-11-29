@@ -170,7 +170,7 @@ local function AddGadgetImpulseRaw(unitID, x, y, z, pushOffGround, useDummy, uni
 			unit[unitID].pushOffGround = true
 		end
 	end
-	
+
 	if doLosCheck and moveType == 2 then -- Only los check for land/sea units.
 		GG.AddSphericalLOSCheck(unitID, unitDefID)
 	end
@@ -363,10 +363,10 @@ function gadget:UnitPreDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, w
 			end
 		end
 
-		AddGadgetImpulse(unitID, x, y, z, magnitude*(0.4 + math.random()*1.2), true, false, true, false, unitDefID)
+		AddGadgetImpulse(unitID, x, y, z, magnitude*(0.4 + math.random()*1.2), true, false, false, false, unitDefID)
 
 		if defData.selfImpulse then
-			AddGadgetImpulse(attackerID, x, y, z, -magnitude*(0.4 + math.random()*1.2), true, false, true, false, unitDefID)
+			AddGadgetImpulse(attackerID, x, y, z, -magnitude*(0.4 + math.random()*1.2), true, false, false, false, unitDefID)
 		end
 
 		if defData.normalDamage then
@@ -425,12 +425,8 @@ local function AddImpulses()
 					data.y = data.y + GROUND_PUSH_CONSTANT
 				end
 				if data.useDummy then
-					local dir = math.random()*2*math.pi
-					local mag = UNSTICK_CONSTANT
-					local dummyX, dummyZ = mag*math.cos(dir), mag*math.sin(dir)
-					spAddUnitImpulse(unitID, dummyX, 0, dummyZ) --dummy impulse (applying impulse>1 make unit less sticky to map surface)
+					Spring.SetUnitPhysicalStateBit(unitID, 512) -- set unit skidding
 					spAddUnitImpulse(unitID, data.x, data.y, data.z)
-					spAddUnitImpulse(unitID, -dummyX, 0, -dummyZ) --remove dummy impulse
 				else
 					spAddUnitImpulse(unitID, data.x, data.y, data.z)
 				end
